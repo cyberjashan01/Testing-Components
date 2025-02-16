@@ -1,0 +1,62 @@
+#include <Servo.h>
+
+// Define pins
+#define LED_PIN 9
+#define IR_SENSOR_PIN 7
+#define TRIG_PIN 10
+#define ECHO_PIN 11
+#define SERVO_PIN 6
+
+Servo myServo;
+
+void setup() {
+    pinMode(LED_PIN, OUTPUT);
+    pinMode(IR_SENSOR_PIN, INPUT);
+    pinMode(TRIG_PIN, OUTPUT);
+    pinMode(ECHO_PIN, INPUT);
+    myServo.attach(SERVO_PIN);
+  
+    Serial.begin(9600);
+    Serial.println("Testing Components...");
+}
+
+void loop() {
+    // LED Test (Blinking)
+    digitalWrite(LED_PIN, HIGH);
+    delay(500);
+    digitalWrite(LED_PIN, LOW);
+    delay(500);
+
+    // Servo Motor Test (Move from 0° to 180° and back)
+    for (int pos = 0; pos <= 180; pos += 10) {
+        myServo.write(pos);
+        delay(50);
+    }
+    for (int pos = 180; pos >= 0; pos -= 10) {
+        myServo.write(pos);
+        delay(50);
+    }
+
+    // IR Sensor Test
+    if (digitalRead(IR_SENSOR_PIN) == LOW) {
+        Serial.println("IR Sensor: Object Detected!");
+    } else {
+        Serial.println("IR Sensor: No Object");
+    }
+
+    // Ultrasonic Sensor Test
+    long duration;
+    int distance;
+    digitalWrite(TRIG_PIN, LOW);
+    delayMicroseconds(2);
+    digitalWrite(TRIG_PIN, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(TRIG_PIN, LOW);
+    duration = pulseIn(ECHO_PIN, HIGH);
+    distance = duration * 0.034 / 2;
+    Serial.print("Ultrasonic Distance: ");
+    Serial.print(distance);
+    Serial.println(" cm");
+
+    delay(1000);  // Wait before next loop
+}
